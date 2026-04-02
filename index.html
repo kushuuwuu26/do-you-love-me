@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A cute interactive love page with Hello Kitty asking if you love her">
+  <title>Do You Love Me? 💕</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 30%, #f48fb1 60%, #f06292 100%);
+      font-family: 'Quicksand', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ===== Raining Hearts Background ===== */
+    .hearts-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .falling-heart {
+      position: absolute;
+      top: -60px;
+      animation: fallHeart linear infinite;
+      opacity: 0.7;
+      font-size: 20px;
+      user-select: none;
+    }
+
+    @keyframes fallHeart {
+      0% {
+        transform: translateY(-60px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.7;
+      }
+      90% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    /* ===== Main Content ===== */
+    .main-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    /* ===== Thought Bubble ===== */
+    .thought-bubble-wrapper {
+      position: relative;
+      margin-bottom: -20px;
+    }
+
+    .thought-bubble {
+      background: white;
+      border-radius: 50px;
+      padding: 25px 45px;
+      position: relative;
+      box-shadow: 
+        0 4px 15px rgba(233, 30, 99, 0.15),
+        inset 0 -2px 6px rgba(233, 30, 99, 0.05);
+      animation: floatBubble 3s ease-in-out infinite;
+    }
+
+    .thought-bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 22px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(233, 30, 99, 0.1);
+    }
+
+    .thought-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-10px);
+      width: 14px;
+      height: 14px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(233, 30, 99, 0.1);
+    }
+
+    .thought-text {
+      font-family: 'Bubblegum Sans', cursive;
+      font-size: 2rem;
+      color: #e91e63;
+      text-align: center;
+      text-shadow: 1px 1px 2px rgba(233, 30, 99, 0.2);
+    }
+
+    .thought-text .heart-icon {
+      display: inline-block;
+      animation: heartPulse 1s ease-in-out infinite;
+      color: #e91e63;
+    }
+
+    @keyframes floatBubble {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+    }
+
+    /* ===== Hello Kitty Figure ===== */
+    .hello-kitty {
+      position: relative;
+      width: 180px;
+      height: 200px;
+      margin-top: 10px;
+    }
+
+    /* Head */
+    .kitty-head {
+      width: 140px;
+      height: 120px;
+      background: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 3px solid #333;
+      z-index: 2;
+    }
+
+    /* Ears */
+    .kitty-ear {
+      width: 45px;
+      height: 50px;
+      background: #fff;
+      border: 3px solid #333;
+      position: absolute;
+      top: -15px;
+      z-index: 1;
+      border-radius: 50% 50% 0 0;
+    }
+
+    .kitty-ear.left {
+      left: 15px;
+      transform: rotate(-20deg);
+    }
+
+    .kitty-ear.right {
+      right: 15px;
+      transform: rotate(20deg);
+    }
+
+    .kitty-ear-inner {
+      width: 25px;
+      height: 28px;
+      background: #f48fb1;
+      border-radius: 50% 50% 0 0;
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Eyes */
+    .kitty-eyes {
+      position: absolute;
+      top: 45px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 25px;
+      z-index: 3;
+    }
+
+    .kitty-eye {
+      width: 12px;
+      height: 14px;
+      background: #333;
+      border-radius: 50%;
+      animation: blink 4s infinite;
+    }
+
+    @keyframes blink {
+      0%, 95%, 100% { transform: scaleY(1); }
+      97% { transform: scaleY(0.1); }
+    }
+
+    /* Nose */
+    .kitty-nose {
+      width: 10px;
+      height: 7px;
+      background: #f9a825;
+      border-radius: 50%;
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+    }
+
+    /* Whiskers */
+    .kitty-whiskers {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      z-index: 3;
+    }
+
+    .whisker {
+      position: absolute;
+      width: 35px;
+      height: 2px;
+      background: #333;
+      border-radius: 2px;
+    }
+
+    .whisker.left-top { left: 0; top: 0; transform: rotate(-10deg); }
+    .whisker.left-bottom { left: 2px; top: 10px; transform: rotate(10deg); }
+    .whisker.right-top { right: 0; top: 0; transform: rotate(10deg); }
+    .whisker.right-bottom { right: 2px; top: 10px; transform: rotate(-10deg); }
+
+    /* Bow */
+    .kitty-bow {
+      position: absolute;
+      top: -5px;
+      right: 8px;
+      z-index: 4;
+    }
+
+    .bow-center {
+      width: 12px;
+      height: 12px;
+      background: #e91e63;
+      border-radius: 50%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .bow-left, .bow-right {
+      width: 22px;
+      height: 18px;
+      background: #e91e63;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .bow-left {
+      left: -16px;
+    }
+
+    .bow-right {
+      right: -16px;
+    }
+
+    /* Body */
+    .kitty-body {
+      width: 110px;
+      height: 80px;
+      background: #fff;
+      border: 3px solid #333;
+      border-radius: 0 0 50px 50px;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .kitty-overalls {
+      width: 100%;
+      height: 50px;
+      background: #f48fb1;
+      position: absolute;
+      bottom: 0;
+      border-top: 3px solid #333;
+    }
+
+    .overall-button {
+      width: 8px;
+      height: 8px;
+      background: #e91e63;
+      border-radius: 50%;
+      position: absolute;
+      top: 8px;
+    }
+
+    .overall-button.left { left: 22px; }
+    .overall-button.right { right: 22px; }
+
+    /* ===== Buttons ===== */
+    .buttons-container {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      margin-top: 20px;
+      position: relative;
+    }
+
+    .btn {
+      padding: 15px 45px;
+      border: none;
+      border-radius: 50px;
+      font-family: 'Bubblegum Sans', cursive;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      position: relative;
+      z-index: 20;
+    }
+
+    #yes-btn {
+      background: linear-gradient(135deg, #e91e63, #f06292);
+      color: white;
+      animation: glowPulse 2s ease-in-out infinite;
+    }
+
+    #yes-btn:hover {
+      box-shadow: 0 8px 30px rgba(233, 30, 99, 0.5);
+      transform: translateY(-2px);
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 6px 20px rgba(233, 30, 99, 0.3); }
+      50% { box-shadow: 0 6px 30px rgba(233, 30, 99, 0.6); }
+    }
+
+    #no-btn {
+      background: linear-gradient(135deg, #90a4ae, #b0bec5);
+      color: white;
+      position: absolute;
+    }
+
+    #no-btn:hover {
+      background: linear-gradient(135deg, #78909c, #90a4ae);
+    }
+
+    /* ===== Final Message ===== */
+    .final-message {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      animation: fadeInUp 1s ease-out;
+      text-align: center;
+    }
+
+    .final-message.show {
+      display: flex;
+    }
+
+    .main-content.hide {
+      display: none;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .final-hearts {
+      font-size: 3rem;
+      animation: heartBurst 1.5s ease-in-out infinite;
+    }
+
+    @keyframes heartBurst {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.1) rotate(-3deg); }
+      50% { transform: scale(1.2) rotate(0deg); }
+      75% { transform: scale(1.1) rotate(3deg); }
+    }
+
+    .final-text-primary {
+      font-family: 'Bubblegum Sans', cursive;
+      font-size: 2.5rem;
+      color: #fff;
+      text-shadow: 
+        2px 2px 4px rgba(233, 30, 99, 0.5),
+        0 0 20px rgba(255, 255, 255, 0.5);
+      animation: textGlow 2s ease-in-out infinite alternate;
+    }
+
+    .final-text-secondary {
+      font-family: 'Bubblegum Sans', cursive;
+      font-size: 3.5rem;
+      background: linear-gradient(135deg, #fff, #fce4ec, #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(2px 2px 4px rgba(233, 30, 99, 0.4));
+      animation: textGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes textGlow {
+      from { filter: drop-shadow(2px 2px 4px rgba(233, 30, 99, 0.4)); }
+      to { filter: drop-shadow(2px 2px 20px rgba(233, 30, 99, 0.8)); }
+    }
+
+    .final-kitty {
+      animation: happyBounce 0.6s ease-in-out infinite;
+    }
+
+    @keyframes happyBounce {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-10px) rotate(-3deg); }
+      75% { transform: translateY(-10px) rotate(3deg); }
+    }
+
+    .floating-hearts-burst {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .burst-heart {
+      position: absolute;
+      font-size: 2rem;
+      animation: burstUp 3s ease-out forwards;
+      opacity: 0;
+    }
+
+    @keyframes burstUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.5);
+      }
+      50% {
+        opacity: 1;
+        transform: translateY(-200px) scale(1.2);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-400px) scale(0.8);
+      }
+    }
+
+    /* Sparkle effect */
+    .sparkle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle, #fff 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: sparkleAnim 1.5s ease-out forwards;
+    }
+
+    @keyframes sparkleAnim {
+      0% { transform: scale(0); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.8; }
+      100% { transform: scale(0); opacity: 0; }
+    }
+
+    /* ===== Attempt Counter ===== */
+    .attempt-counter {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.8);
+      z-index: 50;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .thought-text {
+        font-size: 1.4rem;
+      }
+      .thought-bubble {
+        padding: 18px 30px;
+      }
+      .hello-kitty {
+        transform: scale(0.85);
+      }
+      .btn {
+        padding: 12px 35px;
+        font-size: 1.2rem;
+      }
+      .final-text-primary {
+        font-size: 1.8rem;
+      }
+      .final-text-secondary {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Raining Hearts Background -->
+  <div class="hearts-container" id="hearts-container"></div>
+
+  <!-- Main Interactive Content -->
+  <div class="main-content" id="main-content">
+    <!-- Thought Bubble -->
+    <div class="thought-bubble-wrapper">
+      <div class="thought-bubble">
+        <div class="thought-text">
+          DO YOU LOVE <span class="heart-icon">❤️</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hello Kitty Figure -->
+    <div class="hello-kitty" id="hello-kitty">
+      <!-- Bow -->
+      <div class="kitty-bow">
+        <div class="bow-center"></div>
+        <div class="bow-left"></div>
+        <div class="bow-right"></div>
+      </div>
+      <!-- Ears -->
+      <div class="kitty-ear left">
+        <div class="kitty-ear-inner"></div>
+      </div>
+      <div class="kitty-ear right">
+        <div class="kitty-ear-inner"></div>
+      </div>
+      <!-- Head -->
+      <div class="kitty-head">
+        <!-- Eyes -->
+        <div class="kitty-eyes">
+          <div class="kitty-eye"></div>
+          <div class="kitty-eye"></div>
+        </div>
+        <!-- Nose -->
+        <div class="kitty-nose"></div>
+        <!-- Whiskers -->
+        <div class="kitty-whiskers">
+          <div class="whisker left-top"></div>
+          <div class="whisker left-bottom"></div>
+          <div class="whisker right-top"></div>
+          <div class="whisker right-bottom"></div>
+        </div>
+      </div>
+      <!-- Body -->
+      <div class="kitty-body">
+        <div class="kitty-overalls">
+          <div class="overall-button left"></div>
+          <div class="overall-button right"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="buttons-container" id="buttons-container">
+      <button class="btn" id="yes-btn" onclick="handleYes()">YES 💕</button>
+      <button class="btn" id="no-btn" onmouseenter="moveNoButton()" ontouchstart="moveNoButton()">NO 💔</button>
+    </div>
+
+    <div class="attempt-counter" id="attempt-counter" style="display:none;">
+      Tries to say no: <span id="no-count">0</span> 😂
+    </div>
+  </div>
+
+  <!-- Final Message -->
+  <div class="final-message" id="final-message">
+    <div class="final-hearts">💖✨💕✨💖</div>
+    <div class="final-text-primary">I knew you loved me! 🥰</div>
+    <div class="final-kitty">
+      <!-- Mini Hello Kitty -->
+      <div class="hello-kitty" style="transform: scale(1.2);">
+        <div class="kitty-bow">
+          <div class="bow-center"></div>
+          <div class="bow-left"></div>
+          <div class="bow-right"></div>
+        </div>
+        <div class="kitty-ear left"><div class="kitty-ear-inner"></div></div>
+        <div class="kitty-ear right"><div class="kitty-ear-inner"></div></div>
+        <div class="kitty-head">
+          <div class="kitty-eyes">
+            <div class="kitty-eye" style="animation:none;width:18px;height:6px;border-radius:50%;"></div>
+            <div class="kitty-eye" style="animation:none;width:18px;height:6px;border-radius:50%;"></div>
+          </div>
+          <div class="kitty-nose"></div>
+          <div class="kitty-whiskers">
+            <div class="whisker left-top"></div>
+            <div class="whisker left-bottom"></div>
+            <div class="whisker right-top"></div>
+            <div class="whisker right-bottom"></div>
+          </div>
+        </div>
+        <div class="kitty-body">
+          <div class="kitty-overalls">
+            <div class="overall-button left"></div>
+            <div class="overall-button right"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="final-text-secondary" style="margin-top: 20px;">I LOVE YOU TOO 💗</div>
+    <div class="final-hearts">💖✨💕✨💖</div>
+    <div class="floating-hearts-burst" id="burst-container"></div>
+  </div>
+
+  <script>
+    // ===== Raining Hearts =====
+    const heartsContainer = document.getElementById('hearts-container');
+    const heartEmojis = ['❤️', '💕', '💖', '💗', '💓', '💞', '💘', '🩷', '🤍', '🩵'];
+    
+    // Grid-based heart placement to prevent overlap
+    const COLUMNS = 12;
+    const columnWidth = 100 / COLUMNS;
+    let columnOccupancy = new Array(COLUMNS).fill(0); // tracks timestamp of last heart in each column
+
+    function createFallingHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('falling-heart');
+      heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+      
+      // Find least recently used column
+      const now = Date.now();
+      let bestCol = 0;
+      let oldestTime = Infinity;
+      
+      // Shuffle columns for variety among equally old ones
+      const cols = [...Array(COLUMNS).keys()].sort(() => Math.random() - 0.5);
+      for (const col of cols) {
+        if (columnOccupancy[col] < oldestTime) {
+          oldestTime = columnOccupancy[col];
+          bestCol = col;
+        }
+      }
+      
+      columnOccupancy[bestCol] = now;
+      
+      const leftPos = bestCol * columnWidth + (Math.random() * columnWidth * 0.6 + columnWidth * 0.2);
+      heart.style.left = leftPos + '%';
+      
+      const size = Math.random() * 16 + 14;
+      heart.style.fontSize = size + 'px';
+      
+      const duration = Math.random() * 5 + 6;
+      heart.style.animationDuration = duration + 's';
+      
+      const delay = Math.random() * 0.5;
+      heart.style.animationDelay = delay + 's';
+      
+      heart.style.opacity = (Math.random() * 0.4 + 0.3).toString();
+      
+      heartsContainer.appendChild(heart);
+      
+      setTimeout(() => {
+        heart.remove();
+      }, (duration + delay) * 1000 + 500);
+    }
+
+    // Stagger heart creation
+    setInterval(createFallingHeart, 350);
+    // Initial batch
+    for (let i = 0; i < 8; i++) {
+      setTimeout(createFallingHeart, i * 200);
+    }
+
+    // ===== No Button Logic =====
+    let noCount = 0;
+    let yesScale = 1;
+    const noBtn = document.getElementById('no-btn');
+    const yesBtn = document.getElementById('yes-btn');
+    const counter = document.getElementById('attempt-counter');
+    const noCountEl = document.getElementById('no-count');
+
+    function moveNoButton() {
+      noCount++;
+      noCountEl.textContent = noCount;
+      
+      if (noCount >= 1) {
+        counter.style.display = 'block';
+      }
+
+      // Grow YES button
+      yesScale += 0.18;
+      yesBtn.style.transform = `scale(${yesScale})`;
+      
+      // Move NO button to random position
+      const container = document.getElementById('buttons-container');
+      const containerRect = container.getBoundingClientRect();
+      
+      // Calculate bounds relative to viewport, keeping button visible
+      const maxX = window.innerWidth - 130;
+      const maxY = window.innerHeight - 60;
+      
+      let newX, newY;
+      const yesRect = yesBtn.getBoundingClientRect();
+      
+      // Keep trying until we find a spot that doesn't overlap YES button
+      let attempts = 0;
+      do {
+        newX = Math.random() * (maxX - 40) + 20;
+        newY = Math.random() * (maxY - 40) + 20;
+        attempts++;
+      } while (
+        attempts < 50 &&
+        Math.abs(newX - yesRect.left) < yesRect.width * 1.2 &&
+        Math.abs(newY - yesRect.top) < yesRect.height * 1.2
+      );
+      
+      noBtn.style.position = 'fixed';
+      noBtn.style.left = newX + 'px';
+      noBtn.style.top = newY + 'px';
+      noBtn.style.transition = 'none';
+      
+      // Add a little shake animation
+      noBtn.style.animation = 'none';
+      setTimeout(() => {
+        noBtn.style.animation = '';
+      }, 10);
+
+      // Add sparkle at old position
+      createSparkle(newX + 50, newY + 20);
+
+      // Fun messages on the NO button as count increases
+      const messages = ['NO 💔', 'Nope 😤', 'Never! 😠', 'Stop! 🛑', 'Catch me! 🏃', 'Too slow! 😜', 'Haha! 😂', 'Try again! 🤪', 'No way! 🙅', 'Give up! 😈'];
+      noBtn.textContent = messages[Math.min(noCount - 1, messages.length - 1)] || messages[messages.length - 1];
+    }
+
+    function createSparkle(x, y) {
+      for (let i = 0; i < 5; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.classList.add('sparkle');
+        sparkle.style.left = (x + Math.random() * 40 - 20) + 'px';
+        sparkle.style.top = (y + Math.random() * 40 - 20) + 'px';
+        document.body.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 1500);
+      }
+    }
+
+    // ===== Yes Button Logic =====
+    function handleYes() {
+      const mainContent = document.getElementById('main-content');
+      const finalMessage = document.getElementById('final-message');
+      
+      // Hide main content
+      mainContent.classList.add('hide');
+      noBtn.style.display = 'none';
+      counter.style.display = 'none';
+      
+      // Show final message
+      finalMessage.classList.add('show');
+      
+      // Change background to more vibrant
+      document.body.style.background = 'linear-gradient(135deg, #e91e63 0%, #f06292 25%, #ec407a 50%, #e91e63 75%, #c2185b 100%)';
+      
+      // Create heart burst effect
+      createHeartBurst();
+      
+      // Continuous heart bursts
+      setInterval(createHeartBurst, 3000);
+    }
+
+    function createHeartBurst() {
+      const burstContainer = document.getElementById('burst-container');
+      const hearts = ['💖', '💕', '💗', '💓', '❤️', '💘', '🩷'];
+      
+      for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.classList.add('burst-heart');
+          heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+          heart.style.left = Math.random() * 100 + '%';
+          heart.style.bottom = '-20px';
+          heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+          heart.style.animationDelay = (Math.random() * 0.5) + 's';
+          heart.style.animationDuration = (Math.random() * 2 + 2) + 's';
+          burstContainer.appendChild(heart);
+          
+          setTimeout(() => heart.remove(), 4000);
+        }, i * 150);
+      }
+    }
+  </script>
+</body>
+</html>
